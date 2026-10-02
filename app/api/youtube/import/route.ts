@@ -5,7 +5,7 @@ export async function POST(req:Request){
  const supabase=await createClient();const {data:{user}}=await supabase.auth.getUser();if(!user)return NextResponse.json({error:'Unauthorized'},{status:401})
  const body=await req.json();const playlistId=extractPlaylistId(body.playlistUrl||'');if(!playlistId)return NextResponse.json({error:'Invalid YouTube playlist URL'},{status:400})
  const key=process.env.YOUTUBE_API_KEY;if(!key)return NextResponse.json({error:'YOUTUBE_API_KEY is not configured on Vercel'},{status:500});const apiKey:string=key
- async function yt(path:string){const r=await fetch(`https://www.googleapis.com/youtube/v3/${path}&key=${encodeURIComponent(key)}`,{cache:'no-store'});const j=await r.json();if(!r.ok)throw new Error(j?.error?.message||'YouTube API error');return j}
+ async function yt(path:string){const r=await fetch(`https://www.googleapis.com/youtube/v3/${path}&key=${encodeURIComponent(apiKey)}`,{cache:'no-store'});const j=await r.json();if(!r.ok)throw new Error(j?.error?.message||'YouTube API error');return j}
  try{
   const meta=await yt(`playlists?part=snippet,contentDetails&id=${encodeURIComponent(playlistId)}`);if(!meta.items?.length)return NextResponse.json({error:'Playlist not found or not public'},{status:404})
   const playlist=meta.items[0];let page='';const items:any[]=[];
