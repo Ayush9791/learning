@@ -1,0 +1,2 @@
+import {createClient} from '@/lib/supabase/server';import Dashboard from '@/components/Dashboard'
+export default async function Page(){const s=await createClient();const {data:{user}}=await s.auth.getUser();const {data:tracks}=await s.from('tracks').select('*,lessons(*)').order('created_at',{ascending:false});const {data:sessions}=await s.from('study_sessions').select('*').order('started_at',{ascending:false}).limit(1000);return <Dashboard user={user} initialTracks={tracks||[]} initialSessions={sessions||[]}/>}

@@ -1,29 +1,41 @@
-# LearnTrack
+# LearnTrack Pro
 
-A ready-to-deploy personal learning tracker inspired by Duolingo streaks.
+A cloud-backed personal learning tracker built for Vercel + Supabase. It imports public YouTube playlists, embeds lessons, tracks actual player time while the tab is visible, and keeps study data in Postgres instead of browser storage.
 
-## Deploy
+## Stack
+- Next.js App Router
+- Supabase Auth + Postgres + Row Level Security
+- YouTube Data API v3
+- Vercel
 
-This is a static site. Upload the folder to a Vercel project or connect it to a Git repository. No build command is required. `index.html` is the entry point.
+## 1. Supabase
+Create a Supabase project, open SQL Editor, and run `supabase.sql`.
 
-## Features
+Enable Email auth. For the easiest personal setup, you can disable email confirmation in Supabase Auth settings. Otherwise sign-up will ask the user to confirm their email.
 
-- Learning tracks
-- YouTube lesson allow-list inside the app
-- Embedded YouTube player
-- Real playback-state watch-time tracking
-- Daily minutes/videos goals
-- Current streak calculation
-- Course completion progress
-- Lesson queue
-- Dark/light mode
-- JSON export/import
-- Responsive UI
-- Optional YouTube Data API key storage for future playlist import
+## 2. Environment variables
+Create `.env.local` locally, or add these in Vercel Project Settings → Environment Variables:
 
-## Important limitation
+```env
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
+YOUTUBE_API_KEY=...
+```
 
-A normal website cannot stop a user from opening YouTube separately. LearnTrack only controls and tracks the videos loaded inside its own player.
+Never commit `.env.local`. Never put a Supabase secret/service-role key in browser code. Supabase recommends the publishable key for client applications with RLS and server-side clients for protected server operations.
 
-Browser storage is local to each device. True cross-device sync requires a backend such as Supabase/Postgres plus authentication. The UI and data model are deliberately structured so that cloud persistence can be added without replacing the product.
-# learning
+## 3. GitHub + Vercel
+Push this repository to GitHub. Import the repository into Vercel. Add the three environment variables for Production, Preview, and Development, then deploy.
+
+## 4. Supabase redirect URL
+In Supabase Auth → URL Configuration, set:
+- Site URL: your Vercel URL
+- Redirect URL: `https://YOUR-VERCEL-DOMAIN/auth/callback`
+
+For local development also add `http://localhost:3000/auth/callback`.
+
+## YouTube API
+The app does not put the YouTube API key in GitHub. `/api/youtube/import` reads `YOUTUBE_API_KEY` on the server and calls YouTube Data API v3. It imports all playlist pages and then retrieves video durations in batches.
+
+## Verification
+Install dependencies with `npm install`, then run `npm run build`. This repository is designed for the current Next.js App Router + Supabase SSR pattern.
