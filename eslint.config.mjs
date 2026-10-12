@@ -3,7 +3,7 @@ import nextVitals from 'eslint-config-next/core-web-vitals.js'
 import nextTypescript from 'eslint-config-next/typescript.js'
 
 export default defineConfig([
-  ...nextVitals,
-  ...nextTypescript,
+  nextVitals,
+  nextTypescript,
   globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts']),
 ])
