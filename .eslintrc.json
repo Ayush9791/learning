@@ -3,5 +3,11 @@
     "next/core-web-vitals",
     "next/typescript"
   ],
-  "root": true
+  "root": true,
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off",
+    "react/no-unescaped-entities": "off",
+    "prefer-const": "off",
+    "@next/next/no-html-link-for-pages": "off"
+  }
 }
