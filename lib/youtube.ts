@@ -1,2 +1,4 @@
-export function extractPlaylistId(input:string){try{const u=new URL(input);return u.searchParams.get('list')||null}catch{return input.trim()||null}}
-export function isoDurationToSeconds(value:string){const m=value.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);if(!m)return 0;return (Number(m[1]||0)*3600)+(Number(m[2]||0)*60)+Number(m[3]||0)}
+const PLAYLIST_ID_PATTERN=/^[A-Za-z0-9_-]{10,200}$/
+const YOUTUBE_HOSTS=new Set(['youtube.com','www.youtube.com','m.youtube.com','music.youtube.com'])
+export function extractPlaylistId(input:string){const value=input.trim();if(!value||value.length>2048)return null;let candidate=value;try{const url=new URL(value);if(!['https:','http:'].includes(url.protocol)||!YOUTUBE_HOSTS.has(url.hostname.toLowerCase()))return null;candidate=url.searchParams.get('list')||''}catch{if(value.includes('/')||value.includes('?')||value.includes(':'))return null}return PLAYLIST_ID_PATTERN.test(candidate)?candidate:null}
+export function isoDurationToSeconds(value:string){if(typeof value!=='string')return 0;const m=value.match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/);if(!m||!m[1]&&!m[2]&&!m[3])return 0;return Number(m[1]||0)*3600+Number(m[2]||0)*60+Number(m[3]||0)}
